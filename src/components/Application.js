@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "components/Application.scss";
 import "components/DayListItem.scss";
 import "components/InterviewerListItem.scss";
@@ -6,6 +6,8 @@ import "components/InterviewerList.scss";
 
 import DayList from "components/DayList";
 import Appointment from "components/Appointment"
+
+import axios from "axios"
 
 const appointments = [
   {
@@ -58,27 +60,60 @@ const appointments = [
   },
 ];
 
-const days = [
-  {
-    id: 1,
-    name: "Monday",
-    spots: 2,
-  },
-  {
-    id: 2,
-    name: "Tuesday",
-    spots: 5,
-  },
-  {
-    id: 3,
-    name: "Wednesday",
-    spots: 0,
-  },
-];
+// const days = [
+//   {
+//     id: 1,
+//     name: "Monday",
+//     spots: 2,
+//   },
+//   {
+//     id: 2,
+//     name: "Tuesday",
+//     spots: 5,
+//   },
+//   {
+//     id: 3,
+//     name: "Wednesday",
+//     spots: 0,
+//   },
+// ];
 
 
 export default function Application(props) {
-  const [day, setDay] = useState("Monday");
+  const [day, setDay] = useState("Monday"); 
+
+  const [days, setDays] = useState([]);
+
+//make api request once to get days of the week *will not change* replaces hardcoded variable above
+//ATTEMPT 1
+  // axios
+  // .get("/api/days")
+  // .then((response) => {
+  //   console.log("response", response);
+  //   useEffect(() => {
+  //     setDays(response);
+  //   }, []);
+  // })
+  // .catch((error) => {
+  //   console.log(error.response.status);
+  //   console.log(error.response.headers);
+  //   console.log(error.response.data);
+  // });
+
+useEffect (() => {
+  axios.get('/api/days')
+  .get("/api/days")
+  .then((response) => {
+    console.log("response", response)
+    setDays(response.data);
+  })
+  .catch((error) => {
+    console.log(error.response.status);
+    console.log(error.response.headers);
+    console.log(error.response.data);
+  });
+
+}, []);
 
   const appointmentsList = appointments.map(appointment => <Appointment key={appointment.id} {...appointment} />)
 
