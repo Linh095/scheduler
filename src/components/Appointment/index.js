@@ -15,45 +15,16 @@ const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
 const ERROR_SAVE = "ERROR_SAVE";
+const DELETING = "DELETING";
+const CONFIRM = "CONFIRM";
+const ERROR_DELETE = "ERROR_DELETE";
+const EDITING = "EDITING";
 
 export default function Appointment(props) {
 
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
-
-
-  function bookInterview(id, interview) {
-    console.log(id, interview);
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
-    const appointmentsUpdate = {
-      ...state.appointments,
-      [id]: appointment
-    };
-
-    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
-      // Axios put request to add interivew and reduce number of available spots by 1 for a given day
-      const daysToLoop = lodash.cloneDeep(state.days);
-      const dayOfAppointment = state.day;
-      const currentInterview = state.appointments[id].interview;
-
-      for (const day in daysToLoop) {
-        if (daysToLoop[day].name === dayOfAppointment && !currentInterview) {
-          daysToLoop[day].spots -= 1;
-        }
-      }
-
-      // Set new state after booking appointment
-      setState({
-        ...state,
-        appointments: appointmentsUpdate,
-        days: daysToLoop
-      });
-    });
-  }
 
   //send data to server and call show mode
   function save(name, interviewer) {
@@ -67,9 +38,15 @@ export default function Appointment(props) {
       .then(() => transition(SHOW))
       .catch(() => transition(ERROR_SAVE, true));
   }
+  // Delete an interview
+  function deleteInterview() {
+    transition(DELETING, true);
+    props
+      .deleteInterview(props.id)
+      .then(() => transition(EMPTY))
+      .catch(() => transition(ERROR_DELETE, true));
+  }
 
-  //set empty for now
-  const interviewers=[]
   return (
     <article className="appointment">
       <Header time={props.time} />
@@ -78,15 +55,42 @@ export default function Appointment(props) {
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}
+          onDelete={() => transition(CONFIRM)}
+          onEdit={() => transition(EDITING)}
         />
       )}
       {mode === CREATE && (
         <Form
-          interviewers={interviewers}
+          interviewers={props.interviewers}
           onCancel={() => back()}
           onSave={save}
           onDelete={deleteInterview}
         />
+      )}
+      {mode === EDITING && (
+        <Form
+          interviewers={props.interviewers}
+          onCancel={() => back()}
+          onSave={save}
+          onDelete={deleteInterview}
+          name={props.interview.student}
+          interviewer={props.interview.interviewer.id}
+        />
+      )}
+      {mode === SAVING && <Status message="Saving" />}
+      {mode === DELETING && <Status message="Deleting" />}
+      {mode === CONFIRM && (
+        <Confirm
+          message="Delete this interview?"
+          onConfirm={deleteInterview}
+          onCancel={back}
+        />
+      )}
+      {mode === ERROR_DELETE && (
+        <Error message="Could not cancel appointment" onClose={back} />
+      )}
+      {mode === ERROR_SAVE && (
+        <Error message="Could not save appointment" onClose={back} />
       )}
     </article>
   );
