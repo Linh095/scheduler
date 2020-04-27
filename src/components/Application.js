@@ -10,6 +10,12 @@ import Appointment from "components/Appointment"
 import axios from "axios"
 axios.defaults.baseURL = "http://localhost:8001";
 
+import {
+  getAppointmentsForDay,
+  getInterview,
+  getInterviewersForDay
+} from "helpers/selectors";
+
 export default function Application(props) {
 
   const [state, setState] = useState({
@@ -18,8 +24,6 @@ export default function Application(props) {
     appointments: {},
     interviewers: {}
   });
-
-  const setDay = day => setState({ ...state, day });
 
   useEffect(() => {
     Promise.all([
@@ -35,9 +39,8 @@ export default function Application(props) {
       }));
     });
   }, []);
-
-  const appointments = getAppointmentsForDay(state, day);
-
+  const setDay = day => setState({ ...state, day });
+  const appointments = getAppointmentsForDay(state, state.day);
   const schedule = appointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
 
