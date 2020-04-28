@@ -29,25 +29,22 @@ export default function useApplicationData() {
     };
 
     return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
-      // Axios put request to add interivew and reduce number of available spots by 1 for a given day
-      const daysToLoop = lodash.cloneDeep(state.days);
-
+      // Put request to add interview
       const dayOfAppointment = state.day;
       const currentInterview = state.appointments[id].interview;
 
-      /* eslint-disable */
-      for (const day in daysToLoop) {
-        if (daysToLoop[day].name === dayOfAppointment && !currentInterview) {
-          daysToLoop[day].spots -= 1;
+      //decrease the number of remaining spots
+      const daysTotalInfo = lodash.cloneDeep(state.days);
+      for (const day in daysTotalInfo) {
+        if (daysTotalInfo[day].name === dayOfAppointment && !currentInterview) {
+          daysTotalInfo[day].spots -= 1;
         }
       }
-      /* eslint-enable */
-
       // Set new state after booking appointment
       setState({
         ...state,
         appointments: appointmentsToEdit,
-        days: daysToLoop
+        days: daysTotalInfo
       });
     });
   }
@@ -66,18 +63,18 @@ export default function useApplicationData() {
 
     // Delete request and increase number of available spots for a given day
     return axios.delete(`/api/appointments/${id}`).then(() => {
-      const daysToLoop = lodash.cloneDeep(state.days);
+      const daysTotalInfo = lodash.cloneDeep(state.days);
       const dayOfAppointment = state.day;
 
-      for (const day in daysToLoop) {
-        if (daysToLoop[day].name === dayOfAppointment) {
-          daysToLoop[day].spots += 1;
+      for (const day in daysTotalInfo) {
+        if (daysTotalInfo[day].name === dayOfAppointment) {
+          daysTotalInfo[day].spots += 1;
         }
       }
       setState({
         ...state,
         appointments: appointmentsToEdit,
-        days: daysToLoop
+        days: daysTotalInfo
       });
     });
   }

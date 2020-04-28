@@ -20,21 +20,22 @@ export default function Form(props) {
     reset();
     props.onDelete()
   }
-    // Ensure user enters a name to schedule an interview
-    function validate() {
-      if (name === "") {
-        setError("Student name cannot be blank");
-        return;
-      }
-  
-      if (interviewer === null) {
-        setError("Interviewer cannot be blank");
-        return;
-      }
-  
-      setError("");
-      props.onSave(name, interviewer);
+
+  // Ensure user enters a name to schedule an interview
+  function validate() {
+    if (name === "") {
+      setError("Student name cannot be blank");
+      return;
     }
+
+    if (interviewer === null) {
+      setError("Interviewer cannot be blank");
+      return;
+    }
+    setError("");
+    props.onSave(name, interviewer);
+    return;
+  }
 
   return (
     <main className="appointment__card appointment__card--create">
@@ -51,10 +52,10 @@ export default function Form(props) {
           />
         </form>
         <section className="appointment__validation">{error}</section>
-        <InterviewerList 
-        interviewers={props.interviewers} 
-        interviewer={interviewer} 
-        setInterviewer={setInterviewer} />
+        <InterviewerList
+          interviewers={props.interviewers}
+          interviewer={interviewer}
+          setInterviewer={setInterviewer} />
       </section>
       <section className="appointment__card-right">
         <section className="appointment__actions">
