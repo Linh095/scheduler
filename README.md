@@ -22,3 +22,8 @@ npm test
 npm run storybook
 ```
 ## Screenshots
+![Screenshot homepage with a side panel for navigating to individual days of week](https://github.com/Linh095/scheduler/blob/master/docs/homepage.png)
+
+![Screenshot of form for adding and editing appointments](https://github.com/Linh095/scheduler/blob/master/docs/creating-appointment.png)
+
+![Screenshot of display to confirm that user wants to cancel an appointment](https://github.com/Linh095/scheduler/blob/master/docs/deleting-appointment.png)
