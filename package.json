@@ -7,7 +7,7 @@
     "classnames": "^2.2.6",
     "dom-testing-library": "^5.0.0",
     "jest-dom": "^4.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
